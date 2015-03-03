@@ -163,7 +163,7 @@ lab.experiment('Main', function () {
 		return done();
 	});
 
-	it('Returns error from object', function (done) {
+	it('Returns error from object with a callback', function (done) {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
 		BoomBox.boom(new Error(), false, false, function (error) {
