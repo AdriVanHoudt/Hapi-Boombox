@@ -1,5 +1,5 @@
 {
-  "name": "Boom-Box",
+  "name": "boom-box",
   "version": "0.1.0",
   "description": "Boom error wrapper",
   "main": "index.js",
@@ -27,5 +27,14 @@
   "devDependencies": {
     "code": "1.x.x",
     "lab": "5.x.x"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "boom",
+    "hapijs",
+    "hapi.js",
+    "wrapper"
+  ]
 }
