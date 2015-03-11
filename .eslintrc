@@ -59,7 +59,7 @@
         "no-comma-dangle": 2,
         "no-sparse-arrays": 2,
         "no-ex-assign": 2,
-		    "no-unused-vars": [2,  {"vars": "all", "args": "all"}],
+        "no-unused-vars": [2,  {"vars": "all", "args": "after-used"}],
 		    "no-undef": 2,
         "indent": [2, "tab", { indentSwitchCase: true }]
     }
