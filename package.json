@@ -1,5 +1,5 @@
 {
-  "name": "BoomBox",
+  "name": "Boom-Box",
   "version": "0.1.0",
   "description": "Boom error wrapper",
   "main": "index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AdriVanHoudt/BoomBox.git"
+    "url": "https://github.com/AdriVanHoudt/Boom-Box.git"
   },
   "author": "Adri Van Houdt <adri.van.houdt@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AdriVanHoudt/BoomBox/issues"
+    "url": "https://github.com/AdriVanHoudt/Boom-Box/issues"
   },
-  "homepage": "https://github.com/AdriVanHoudt/BoomBox",
+  "homepage": "https://github.com/AdriVanHoudt/Boom-Box",
   "dependencies": {
     "boom": "2.6.x",
     "hoek": "2.11.x"
