@@ -18,8 +18,7 @@
   },
   "homepage": "https://github.com/AdriVanHoudt/Boom-Box",
   "dependencies": {
-    "boom": "2.6.x",
-    "hoek": "2.11.x"
+    "boom": "2.6.x"
   },
   "engines": {
     "node": ">=0.10.36"

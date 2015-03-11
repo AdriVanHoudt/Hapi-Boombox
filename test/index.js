@@ -18,9 +18,20 @@ lab.experiment('Config', function () {
 		return done();
 	});
 
+	it('Throws on wrong error path', function (done) {
+
+		try {
+			require('../index')('..');
+		} catch (e) {
+			expect(e).to.exist();
+		}
+
+		return done();
+	});
 });
 
 lab.experiment('Main', function () {
+
 	it('Returns the right error for the provided key', function (done) {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
@@ -73,7 +84,7 @@ lab.experiment('Main', function () {
 		return done();
 	});
 
-	it('Returns message corresponding with given key with eturnError = false && convert = true', function (done) {
+	it('Returns message corresponding with given key with returnError = false && convert = true', function (done) {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
 		var error = BoomBox.boom('ERROR_KEY_1', false, true);
