@@ -1,6 +1,6 @@
 {
 	"ERROR_KEY_1": {
 		"message": "Error one",
-		"type": "badRequest"
+		"type": "methodNotAllowed"
 	}
 }
