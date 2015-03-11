@@ -7,7 +7,7 @@ var lab = exports.lab = Lab.script();
 var it = lab.it;
 var expect = Code.expect;
 
-lab.experiment('Main', function () {
+lab.experiment('Config', function () {
 
 	it('Resolves the config path correctly', function (done) {
 
@@ -18,13 +18,16 @@ lab.experiment('Main', function () {
 		return done();
 	});
 
+});
+
+lab.experiment('Main', function () {
 	it('Returns the right error for the provided key', function (done) {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
 		var error = BoomBox.boom('ERROR_KEY_1');
 
 		expect(error.isBoom).to.be.a.boolean().and.to.equal(true);
-		expect(error.output.payload.message).to.contain('Error one');
+		expect(error.output.payload.message).to.equal('Error one');
 
 		return done();
 	});
@@ -35,7 +38,7 @@ lab.experiment('Main', function () {
 		var error = BoomBox.boom(new Error('Custom error'));
 
 		expect(error.isBoom).to.be.a.boolean().and.to.equal(true);
-		expect(error.output.payload.message).to.contain('Custom error');
+		expect(error.output.payload.message).to.equal('Custom error');
 
 		return done();
 	});
@@ -45,7 +48,7 @@ lab.experiment('Main', function () {
 
 		var error = BoomBox.boom(new Error('Custom error'), false);
 
-		expect(error).to.contain('Custom error');
+		expect(error).to.equal('Custom error');
 
 		return done();
 	});
@@ -55,7 +58,7 @@ lab.experiment('Main', function () {
 
 		var error = BoomBox.boom('Custom error', false, false);
 
-		expect(error).to.contain('Custom error');
+		expect(error).to.equal('Custom error');
 
 		return done();
 	});
@@ -65,7 +68,7 @@ lab.experiment('Main', function () {
 
 		var error = BoomBox.boom(new Error('ERROR_KEY_1'), false, true);
 
-		expect(error).to.contain('ERROR_KEY_1');
+		expect(error).to.equal('ERROR_KEY_1');
 
 		return done();
 	});
@@ -74,8 +77,7 @@ lab.experiment('Main', function () {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
 		var error = BoomBox.boom('ERROR_KEY_1', false, true);
-
-		expect(error).to.contain('Error one');
+		expect(error).to.equal('Error one');
 
 		return done();
 	});
@@ -130,13 +132,36 @@ lab.experiment('Main', function () {
 		return done();
 	});
 
+	it('Returns error from object', function (done) {
+		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
+
+		var error = BoomBox.boom({ foo: 'bar' });
+
+		expect(error).to.be.an.instanceOf(Error);
+
+		return done();
+	});
+
+	it('Tries to convert but does not return error', function (done) {
+		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
+
+		var error = BoomBox.boom({ foo: 'bar' }, false, true);
+
+		expect(error).to.deep.equal({ foo: 'bar' });
+
+		return done();
+	});
+});
+
+lab.experiment('Callback', function () {
+
 	it('Uses a callback when provided', function (done) {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
-		BoomBox.boom(new Error('Custom error'), null, null, function (error) {
+		return BoomBox.boom(new Error('Custom error'), null, null, function (error) {
 
 			expect(error.isBoom).to.be.a.boolean().and.to.equal(true);
-			expect(error.output.payload.message).to.contain('Custom error');
+			expect(error.output.payload.message).to.equal('Custom error');
 
 			return done();
 		});
@@ -145,28 +170,18 @@ lab.experiment('Main', function () {
 	it('Uses a callback and does not return error', function (done) {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
-		BoomBox.boom(new Error('Custom error'), false, null, function (error) {
+		return BoomBox.boom(new Error('Custom error'), false, null, function (error) {
 
-			expect(error).to.contain('Custom error');
+			expect(error).to.equal('Custom error');
 
 			return done();
 		});
 	});
 
-	it('Returns error from object', function (done) {
-		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
-
-		var error = BoomBox.boom({foo: 'bar'});
-
-		expect(error).to.be.an.instanceOf(Error);
-
-		return done();
-	});
-
 	it('Returns error from object with a callback', function (done) {
 		var BoomBox = require('../index')(Path.resolve(__dirname, './config/errors.json'));
 
-		BoomBox.boom(new Error(), false, false, function (error) {
+		return BoomBox.boom(new Error(), false, false, function (error) {
 
 			expect(error).to.be.an.instanceOf(Error);
 
