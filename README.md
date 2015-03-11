@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/AdriVanHoudt/BoomBox.svg)](https://travis-ci.org/AdriVanHoudt/BoomBox)
+[![Build Status](https://travis-ci.org/AdriVanHoudt/Boom-Box.svg)](https://travis-ci.org/AdriVanHoudt/Boom-Box)
 # BoomBox
 >Boom wrapper
 
