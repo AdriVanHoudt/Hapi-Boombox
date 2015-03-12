@@ -14,8 +14,8 @@ You can pass anything into the boom method. Boombox will try to match an error f
 
 You pass some options into the method.
 
-    * `returnError` - If `false` will return only the error message. If `convert` is true Boombox will try to convert to an error first (matched from errors or general error)
-		* `convert` - If `false` will not try to convert to a Boom error. If `returnError` is `true` will generate a generic Error
+* `returnError` - If `false` will return only the error message. If `convert` is true Boombox will try to convert to an error first (matched from errors or general error)
+* `convert` - If `false` will not try to convert to a Boom error. If `returnError` is `true` will generate a generic Error
     
 If you try to convert a non existing key into a Boom error it will generate a `Internal Server Error` error. This is by design (atm) to make sure you notice it when you use an non implemented error key.
  
