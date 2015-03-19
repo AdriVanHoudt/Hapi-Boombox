@@ -121,6 +121,46 @@ lab.experiment('Config', function () {
 		});
 	});
 
+	it('Registers reply method and also logs not converted errors', function (done) {
+
+		var server = new Hapi.Server();
+		server.connection();
+
+		server.register({
+			register: require('../'),
+			options: { errors: errors}
+		}, function (err) {
+			expect(err).to.not.exist();
+
+			server.route([{
+				method: 'GET',
+				path: '/test',
+				config: {
+					handler: function (request, reply) {
+
+						expect(reply.boom).to.exist();
+
+						return reply.boom(new Error('error'), true, false);
+					}
+				}
+			}]);
+
+			server.inject({
+				method: 'GET',
+				url: '/test'
+			}, function (response) {
+
+				expect(response.result).to.deep.equal({
+					statusCode: 500,
+					error: 'Internal Server Error',
+					message: 'An internal server error occurred'
+				});
+
+				done();
+			});
+		});
+	});
+
 	it('Accepts null as options and defaults to true', function (done) {
 
 		var server = new Hapi.Server();
