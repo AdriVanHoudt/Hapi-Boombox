@@ -11,7 +11,7 @@ var errors = require('./config/errors.json');
 
 lab.experiment('Config', function () {
 
-	it('Resgisters', function (done) {
+	it('Registers', function (done) {
 
 		var server = new Hapi.Server();
 		server.connection();
