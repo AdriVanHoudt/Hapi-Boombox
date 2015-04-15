@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "code": "1.x.x",
+    "eslint-plugin-hapi": "1.x.x",
     "hapi": "8.3.x",
     "lab": "5.x.x"
   },

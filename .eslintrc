@@ -3,6 +3,9 @@
         "browser": false,
         "node": true
     },
+    "plugins": [
+        "eslint-plugin-hapi"
+    ],
     "rules": {
         "consistent-return": 0,
         "vars-on-top": 0,
@@ -61,6 +64,7 @@
         "no-ex-assign": 2,
         "no-unused-vars": [2,  {"vars": "all", "args": "after-used"}],
 		    "no-undef": 2,
-        "indent": [2, "tab", { indentSwitchCase: true }]
+        "indent": [2, "tab", { indentSwitchCase: true }],
+        "hapi/hapi-scope-start": 1
     }
 }

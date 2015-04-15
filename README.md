@@ -18,6 +18,18 @@ You pass some options into the method.
 * `convert` - If `false` will not try to convert to a Boom error. If `returnError` is `true` will generate a generic Error
     
 If you try to convert a non existing key into a Boom error it will generate a `Internal Server Error` error. This is by design (atm) to make sure you notice it when you use an non implemented error key.
+
+###### Loging
+Both methods will do a `server.log` with `hapi-boombox` as tag and the result as data.
+`reply.boom` logs some aditional data: 
+
+* error: the restult of Boombox,
+* path: the path from where Boombox was called,
+* query: the query params as object from the request,
+* method: the method from the request [get, post, ...],
+* credentials: if present this will be an object that includes 2 properties from `request.auth.credentials`. 
+    * `id` and `name`. 
+    * These are properties required by the author for his project. If you want more or something custumizable make an issue or PR.
  
 ## Test
 100% test coverage!

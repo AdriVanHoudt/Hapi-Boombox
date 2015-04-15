@@ -20,9 +20,11 @@ lab.experiment('Config', function () {
 			register: require('../'),
 			options: { errors: errors }
 		}, function (err) {
+
 			expect(err).to.not.exist();
 
 			server.start(function(err) {
+
 				expect(err).to.not.exist();
 
 				done();
@@ -71,8 +73,9 @@ lab.experiment('Config', function () {
 
 		server.register({
 			register: require('../'),
-			options: { errors: errors}
+			options: { errors: errors }
 		}, function (err) {
+
 			expect(err).to.not.exist();
 
 			expect(server.boom).to.exist();
@@ -88,8 +91,9 @@ lab.experiment('Config', function () {
 
 		server.register({
 			register: require('../'),
-			options: { errors: errors}
+			options: { errors: errors }
 		}, function (err) {
+
 			expect(err).to.not.exist();
 
 			server.route([{
@@ -99,6 +103,12 @@ lab.experiment('Config', function () {
 					handler: function (request, reply) {
 
 						expect(reply.boom).to.exist();
+
+						// set credentials for test
+						request.auth.credentials = {
+							id: 1,
+							name: 'Box'
+						};
 
 						return reply.boom(new Error('error'));
 					}
@@ -128,8 +138,9 @@ lab.experiment('Config', function () {
 
 		server.register({
 			register: require('../'),
-			options: { errors: errors}
+			options: { errors: errors }
 		}, function (err) {
+
 			expect(err).to.not.exist();
 
 			server.route([{
@@ -170,6 +181,7 @@ lab.experiment('Config', function () {
 			register: require('../'),
 			options: { errors: errors }
 		}, function (err) {
+
 			expect(err).to.not.exist();
 
 			var error = server.boom(new Error(), null, null);
@@ -183,18 +195,20 @@ lab.experiment('Config', function () {
 });
 
 
-lab.experiment('Main', function () {
+lab.experiment('Boom', function () {
 
 	var server = new Hapi.Server();
 
 
 	lab.before(function (done) {
+
 		server.connection();
 
 		server.register({
 			register: require('../'),
 			options: { errors: require('./config/errors.json') }
 		}, function (err) {
+
 			expect(err).to.not.exist();
 
 			return done();
