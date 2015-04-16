@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.1
+## 1.1.2
 * Added more data to the loging
 
 ## 1.1.0
