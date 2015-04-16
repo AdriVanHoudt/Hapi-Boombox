@@ -23,13 +23,12 @@ If you try to convert a non existing key into a Boom error it will generate a `I
 Both methods will do a `server.log` with `hapi-boombox` as tag and the result as data.
 `reply.boom` logs some aditional data: 
 
-* error: the restult of Boombox,
-* path: the path from where Boombox was called,
-* query: the query params as object from the request,
-* method: the method from the request [get, post, ...],
-* credentials: if present this will be an object that includes 2 properties from `request.auth.credentials`. 
-    * `id` and `name`. 
-    * These are properties required by the author for his project. If you want more or something custumizable make an issue or PR.
+* `error`: the restult of Boombox,
+* `data`: additional info about the request
+    * `path`, `query`, `method`, `payload`, `headers`, `request.info`, `credentials`
+        * `credentials`: if present this will be an object that includes 2 properties from `request.auth.credentials`. 
+            * `id` and `name`. 
+            * These are properties required by the author for his project. If you want more or something custumizable make an issue or PR.
  
 ## Test
 100% test coverage!
