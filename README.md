@@ -1,5 +1,5 @@
 # Hapi-Boombox [![Build Status](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox.svg)](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox)
->Hapi error convertion and logging
+>Hapi error conversion and logging
 
 ## What
 Boombox logs errors and is able to transform errors.
