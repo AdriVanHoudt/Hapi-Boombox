@@ -2,7 +2,7 @@
   "name": "hapi-boombox",
   "version": "1.1.5",
   "description": "Boom error wrapper",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "lab -e test -t 100 -vL -a code",
     "test-html": "lab -e test -r html -o coverage.html -vL -a code"
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/AdriVanHoudt/Hapi-Boombox",
   "dependencies": {
-    "boom": "2.6.x"
+    "boom": "2.x.x"
   },
   "engines": {
     "node": ">=0.10.36"
@@ -27,6 +27,7 @@
     "code": "1.x.x",
     "eslint-plugin-hapi": "1.x.x",
     "hapi": "8.x.x",
+    "hapi-auth-basic": "^2.0.0",
     "lab": "5.x.x"
   },
   "directories": {

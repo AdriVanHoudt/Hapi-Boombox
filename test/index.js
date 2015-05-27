@@ -2,14 +2,18 @@ var Lab = require('lab');
 var Code = require('code');
 var Boom = require('boom');
 var Hapi = require('hapi');
+var Basic = require('hapi-auth-basic');
+
+var Errors = require('./config/errors.json');
+
 
 var lab = exports.lab = Lab.script();
+var describe = lab.experiment;
 var it = lab.it;
 var expect = Code.expect;
 
-var errors = require('./config/errors.json');
 
-lab.experiment('Config', function () {
+describe('Config', function () {
 
     it('Registers', function (done) {
 
@@ -18,12 +22,12 @@ lab.experiment('Config', function () {
 
         server.register({
             register: require('../'),
-            options: { errors: errors }
+            options: { errors: Errors }
         }, function (err) {
 
             expect(err).to.not.exist();
 
-            server.start(function(err) {
+            server.start(function (err) {
 
                 expect(err).to.not.exist();
 
@@ -32,173 +36,25 @@ lab.experiment('Config', function () {
         });
     });
 
-    it('Throws when not passed errors key in options', function (done) {
+    it('Not providing custom errors does not throw', function (done) {
 
         var server = new Hapi.Server();
         server.connection();
 
         try {
-
             server.register({ register: require('../') }, function () {});
         } catch (e) {
-            expect(e).to.exist();
-
-            done();
+            expect(e).to.not.exist();
         }
+
+        done();
     });
-
-    it('Throws when not passed errors object', function (done) {
-
-        var server = new Hapi.Server();
-        server.connection();
-
-        try {
-
-            server.register({
-                register: require('../'),
-                options: 'test'
-            }, function () {});
-
-        } catch (e) {
-            expect(e).to.exist();
-
-            done();
-        }
-    });
-
-    it('Registers server method', function (done) {
-
-        var server = new Hapi.Server();
-        server.connection();
-
-        server.register({
-            register: require('../'),
-            options: { errors: errors }
-        }, function (err) {
-
-            expect(err).to.not.exist();
-
-            expect(server.boom).to.exist();
-
-            done();
-        });
-    });
-
-    it('Registers reply method', function (done) {
-
-        var server = new Hapi.Server();
-        server.connection();
-
-        server.register({
-            register: require('../'),
-            options: { errors: errors }
-        }, function (err) {
-
-            expect(err).to.not.exist();
-
-            server.route([{
-                method: 'GET',
-                path: '/test',
-                config: {
-                    handler: function (request, reply) {
-
-                        expect(reply.boom).to.exist();
-
-                        // set credentials for test
-                        request.auth.credentials = {
-                            id: 1,
-                            name: 'Box'
-                        };
-
-                        return reply.boom(new Error('error'));
-                    }
-                }
-            }]);
-
-            server.inject({
-                method: 'GET',
-                url: '/test'
-            }, function (response) {
-
-                expect(response.result).to.deep.equal({
-                    statusCode: 400,
-                    error: 'Bad Request',
-                    message: 'error'
-                });
-
-                done();
-            });
-        });
-    });
-
-    it('Registers reply method and also logs not converted errors', function (done) {
-
-        var server = new Hapi.Server();
-        server.connection();
-
-        server.register({
-            register: require('../'),
-            options: { errors: errors }
-        }, function (err) {
-
-            expect(err).to.not.exist();
-
-            server.route([{
-                method: 'GET',
-                path: '/test',
-                config: {
-                    handler: function (request, reply) {
-
-                        expect(reply.boom).to.exist();
-
-                        return reply.boom(new Error('error'), true, false);
-                    }
-                }
-            }]);
-
-            server.inject({
-                method: 'GET',
-                url: '/test'
-            }, function (response) {
-
-                expect(response.result).to.deep.equal({
-                    statusCode: 500,
-                    error: 'Internal Server Error',
-                    message: 'An internal server error occurred'
-                });
-
-                done();
-            });
-        });
-    });
-
-    it('Accepts null as options and defaults to true', function (done) {
-
-        var server = new Hapi.Server();
-        server.connection();
-
-        server.register({
-            register: require('../'),
-            options: { errors: errors }
-        }, function (err) {
-
-            expect(err).to.not.exist();
-
-            var error = server.boom(new Error(), null, null);
-
-            expect(error).to.exist();
-
-            done();
-        });
-    });
-
 });
 
 
-lab.experiment('Boom', function () {
+describe('Boombox', function () {
 
     var server = new Hapi.Server();
-
 
     lab.before(function (done) {
 
@@ -206,154 +62,132 @@ lab.experiment('Boom', function () {
 
         server.register({
             register: require('../'),
-            options: { errors: require('./config/errors.json') }
+            options: { errors: Errors }
         }, function (err) {
 
             expect(err).to.not.exist();
 
-            return done();
+            server.route([{
+                method: 'POST',
+                path: '/error',
+                config: {
+                    handler: function (request, reply) {
+
+                        return reply(new Error(request.payload.error));
+                    }
+                }
+            }]);
+
+            server.route([{
+                method: 'POST',
+                path: '/normal',
+                config: {
+                    handler: function (request, reply) {
+
+                        return reply(request.payload);
+                    }
+                }
+            }]);
+
+            server.register(Basic, function (err) {
+
+                server.auth.strategy('simple', 'basic', {
+                    validateFunc: function (a, v, callback) {
+
+                        return callback(null, true, { id: 1 });
+                    }
+                });
+
+                server.route([{
+                    method: 'GET',
+                    path: '/auth',
+                    config: {
+                        auth: 'simple',
+                        handler: function (request, reply) {
+
+                            return reply(new Error(request.payload));
+                        }
+                    }
+                }]);
+
+                return done();
+            });
         });
     });
 
     it('Returns the right error for the provided key', function (done) {
 
-        var error = server.boom('ERROR_KEY_1');
+        var payload = { error: 'ERROR_KEY_1' };
 
-        expect(error.isBoom).to.equal(true);
-        expect(error.output.payload).to.deep.equal({
-            statusCode: 405,
-            error: 'Method Not Allowed',
-            message: 'Error one'
+        server.inject({
+            method: 'POST',
+            url: '/error',
+            payload: payload
+        }, function (response) {
+
+            expect(response.result).to.deep.equal({
+                statusCode: 405,
+                error: 'Method Not Allowed',
+                message: 'Error one'
+            });
+
+            done();
         });
-
-        done();
     });
 
     it('Returns the right error for a custom error', function (done) {
 
-        var error = server.boom(new Error('Custom error'));
+        var payload = { error: 'Random error' };
 
-        expect(error.isBoom).to.equal(true);
-        expect(error.output.payload).to.deep.equal({
-            statusCode: 400,
-            error: 'Bad Request',
-            message: 'Custom error'
+        server.inject({
+            method: 'POST',
+            url: '/error',
+            payload: payload
+        }, function (response) {
+
+            expect(response.result).to.deep.equal({
+                statusCode: 500,
+                error: 'Internal Server Error',
+                message: 'An internal server error occurred'
+            });
+
+            done();
         });
-
-        done();
     });
 
-    it('Does not return an error when told to', function (done) {
+    it('Replies normally when not providing an error', function (done) {
 
-        var error = server.boom(new Error('Custom error'), false);
+        var payload = { normal: 'test' };
 
-        expect(error).to.equal('Custom error');
+        server.inject({
+            method: 'POST',
+            url: '/normal',
+            payload: payload
+        }, function (response) {
 
-        return done();
-    });
+            expect(response.result).to.deep.equal(payload);
 
-    it('Does not convert the error when told to', function (done) {
-
-        var error = server.boom('Custom error', false, false);
-
-        expect(error).to.equal('Custom error');
-
-        return done();
-    });
-
-    it('Returns message when given Error and returnError = false && convert = true', function (done) {
-
-        var error = server.boom(new Error('ERROR_KEY_1'), false, true);
-
-        expect(error).to.equal('ERROR_KEY_1');
-
-        return done();
-    });
-
-    it('Returns message corresponding with given key with returnError = false && convert = true', function (done) {
-
-        var error = server.boom('ERROR_KEY_1', false, true);
-
-        expect(error).to.equal('Error one');
-
-        return done();
-    });
-
-    it('Returns error corresponding with given key with returnError = true && convert = false', function (done) {
-
-        var error = server.boom('ERROR_KEY_1', true, false);
-
-        expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('ERROR_KEY_1');
-
-        return done();
-    });
-
-    it('Returns error given Error and returnError = true && convert = false', function (done) {
-
-        var error = server.boom(new Error('Custom error'), true, false);
-
-        expect(error).to.be.an.instanceOf(Error);
-        expect(error.message).to.equal('Error: Custom error');
-
-        return done();
-    });
-
-    it('Returns Internal server error if trying to convert non existing key', function (done) {
-
-        var error = server.boom('ERROR_KEY_INKNOWN');
-
-        expect(error.isBoom).to.equal(true);
-        expect(error.output.payload).to.deep.equal({
-            statusCode: 500,
-            error: 'Internal Server Error',
-            message: 'An internal server error occurred'
+            done();
         });
-
-        return done();
     });
 
-    it('Returns same Boom error if given Boom error', function (done) {
+    it('Has the credentials in the log', function (done) {
 
-        var error = server.boom(Boom.badRequest());
+        server.inject({
+            method: 'GET',
+            url: '/auth',
+            headers: {
+                authorization: 'Basic dGVzdDp0ZXN0'
+            }
+        }, function (response) {
 
-        expect(error.isBoom).to.equal(true);
-        expect(error.output.payload).to.deep.equal({
-            statusCode: 400,
-            error: 'Bad Request'
+            expect(response.result).to.deep.equal({
+                statusCode: 500,
+                error: 'Internal Server Error',
+                message: 'An internal server error occurred'
+            });
+
+            done();
         });
-
-        return done();
-    });
-
-    it('Returns Boom error if given Error', function (done) {
-
-        var error = server.boom(new Error());
-
-        expect(error.isBoom).to.equal(true);
-        expect(error.output.payload).to.deep.equal({
-            statusCode: 400,
-            error: 'Bad Request'
-        });
-
-        return done();
-    });
-
-    it('Returns error from object', function (done) {
-
-        var error = server.boom({ foo: 'bar' });
-
-        expect(error).to.be.an.instanceOf(Error);
-
-        return done();
-    });
-
-    it('Tries to convert but does not return error', function (done) {
-
-        var error = server.boom({ foo: 'bar' }, false, true);
-
-        expect(error).to.deep.equal({ foo: 'bar' });
-
-        return done();
     });
 });
