@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox.svg)](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox)
-# Hapi-Boombox
+# Hapi-Boombox [![Build Status](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox.svg)](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox)
 >Hapi error convertion and logging
 
 ## What
