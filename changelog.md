@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.0
+* Only deal with server errors (prevents from logging and tryin to convert 404's for example)
+
 ## 2.0.0
 * Simplify all the things
 * Complete rewrite
