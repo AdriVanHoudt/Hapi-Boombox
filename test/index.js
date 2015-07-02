@@ -1,6 +1,5 @@
 var Lab = require('lab');
 var Code = require('code');
-var Boom = require('boom');
 var Hapi = require('hapi');
 var Basic = require('hapi-auth-basic');
 
@@ -13,7 +12,7 @@ var it = lab.it;
 var expect = Code.expect;
 
 
-describe('Config', function () {
+describe('Startup', function () {
 
     it('Registers', function (done) {
 
@@ -35,24 +34,10 @@ describe('Config', function () {
             });
         });
     });
-
-    it('Not providing custom errors does not throw', function (done) {
-
-        var server = new Hapi.Server();
-        server.connection();
-
-        try {
-            server.register({ register: require('../') }, function () {});
-        } catch (e) {
-            expect(e).to.not.exist();
-        }
-
-        done();
-    });
 });
 
 
-describe('Boombox', function () {
+describe('Boombox basics', function () {
 
     var server = new Hapi.Server();
 
@@ -90,6 +75,8 @@ describe('Boombox', function () {
             }]);
 
             server.register(Basic, function (err) {
+
+                expect(err).to.not.exist();
 
                 server.auth.strategy('simple', 'basic', {
                     validateFunc: function (a, v, callback) {
@@ -188,6 +175,63 @@ describe('Boombox', function () {
             });
 
             done();
+        });
+    });
+});
+
+describe('Options', function () {
+
+    it('Not providing custom errors does not throw', function (done) {
+
+        var server = new Hapi.Server();
+        server.connection();
+
+        try {
+            server.register({ register: require('../') }, function () {});
+        } catch (e) {
+            expect(e).to.not.exist();
+        }
+
+        done();
+    });
+
+    it('Also throws error when options.throw === true', function (done) {
+
+        var server = new Hapi.Server();
+        server.connection();
+
+        server.register({
+            register: require('../'),
+            options: {
+                throw: true
+            }
+        }, function (err) {
+
+            expect(err).to.not.exist();
+
+            server.route([{
+                method: 'POST',
+                path: '/error',
+                config: {
+                    handler: function (request, reply) {
+
+                        return reply(new Error('Ignore me'));
+                    }
+                }
+            }]);
+
+            server.inject( {
+                method: 'POST',
+                url: '/error'
+            }, function (response) {
+
+                // take log on index 1 because the first one will be the handler error log
+                var logMessage = response.request.getLog([ 'internal', 'implementation', 'error' ])[1].data.message;
+
+                expect(logMessage).to.equal('Ignore me');
+                done();
+            });
+
         });
     });
 });

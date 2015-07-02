@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.0
+* Added `throw` option. When `true` it will alao throw the modified error. This can be usefull in some logging or debugging cases.
+
 ## 2.1.0
 * Only deal with server errors (prevents from logging and tryin to convert 404's for example)
 
