@@ -2,7 +2,7 @@
     "env": {
         "node": true
     },
-    "extends": "/usr/local/lib/node_modules/lab/lib/linters/eslint/.eslintrc",
+    "extends": "./node_modules/lab/lib/linters/eslint/.eslintrc",
     "rules": {
         "no-undef": 2,
         "no-unused-expressions": 2,
