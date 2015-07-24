@@ -27,7 +27,7 @@
     "code": "1.x.x",
     "eslint-plugin-hapi": "1.x.x",
     "hapi": "8.x.x",
-    "hapi-auth-basic": "^2.0.0",
+    "hapi-auth-basic": "3.x.x",
     "lab": "5.x.x"
   },
   "directories": {
@@ -37,6 +37,7 @@
     "boom",
     "hapijs",
     "hapi.js",
-    "wrapper"
+    "wrapper",
+    "boombox"
   ]
 }

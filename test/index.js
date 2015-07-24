@@ -45,10 +45,10 @@ describe('Boombox basics', function () {
 
         server.connection();
 
-        server.register({
+        server.register([{
             register: require('../'),
             options: { errors: Errors }
-        }, function (err) {
+        }, Basic], function (err) {
 
             expect(err).to.not.exist();
 
@@ -74,31 +74,26 @@ describe('Boombox basics', function () {
                 }
             }]);
 
-            server.register(Basic, function (err) {
+            server.auth.strategy('simple', 'basic', {
+                validateFunc: function (req, a, v, callback) {
 
-                expect(err).to.not.exist();
-
-                server.auth.strategy('simple', 'basic', {
-                    validateFunc: function (a, v, callback) {
-
-                        return callback(null, true, { id: 1 });
-                    }
-                });
-
-                server.route([{
-                    method: 'GET',
-                    path: '/auth',
-                    config: {
-                        auth: 'simple',
-                        handler: function (request, reply) {
-
-                            return reply(new Error(request.payload));
-                        }
-                    }
-                }]);
-
-                return done();
+                    return callback(null, true, { id: 1, name: 'John Doe' });
+                }
             });
+
+            server.route([{
+                method: 'POST',
+                path: '/auth',
+                config: {
+                    auth: 'simple',
+                    handler: function (request, reply) {
+
+                        return reply(new Error(request.payload.error));
+                    }
+                }
+            }]);
+
+            return done();
         });
     });
 
@@ -124,7 +119,7 @@ describe('Boombox basics', function () {
 
     it('Returns the right error for a custom error', function (done) {
 
-        var payload = { error: 'Random error' };
+        var payload = { error: 'IGNORE ME' };
 
         server.inject({
             method: 'POST',
@@ -132,6 +127,7 @@ describe('Boombox basics', function () {
             payload: payload
         }, function (response) {
 
+            expect(response.request.getLog('implementation').length).to.equal(1);
             expect(response.result).to.deep.equal({
                 statusCode: 500,
                 error: 'Internal Server Error',
@@ -158,20 +154,45 @@ describe('Boombox basics', function () {
         });
     });
 
-    it('Has the credentials in the log', function (done) {
+    it('Only throws not converted errors', function (done) {
+
+        var payload = { error: 'ERROR_KEY_1' };
 
         server.inject({
-            method: 'GET',
+            method: 'POST',
             url: '/auth',
+            payload: payload,
             headers: {
                 authorization: 'Basic dGVzdDp0ZXN0'
             }
         }, function (response) {
 
+            expect(response.request.getLog('implementation').length).to.equal(0);
+
+            done();
+        });
+    });
+
+    it('Has the credentials in the log', function (done) {
+
+        var payload = { error: 'ERROR_KEY_1' };
+
+        server.inject({
+            method: 'POST',
+            url: '/auth',
+            payload: payload,
+            headers: {
+                authorization: 'Basic dGVzdDp0ZXN0'
+            }
+        }, function (response) {
+
+            var credentials = response.request.getLog(false)[0].data.request.credentials;
+            expect(credentials).to.deep.equal({ id: 1, name: 'John Doe' });
+
             expect(response.result).to.deep.equal({
-                statusCode: 500,
-                error: 'Internal Server Error',
-                message: 'An internal server error occurred'
+                statusCode: 405,
+                error: 'Method Not Allowed',
+                message: 'Error one'
             });
 
             done();
@@ -193,45 +214,5 @@ describe('Options', function () {
         }
 
         done();
-    });
-
-    it('Also throws error when options.throw === true', function (done) {
-
-        var server = new Hapi.Server();
-        server.connection();
-
-        server.register({
-            register: require('../'),
-            options: {
-                throw: true
-            }
-        }, function (err) {
-
-            expect(err).to.not.exist();
-
-            server.route([{
-                method: 'POST',
-                path: '/error',
-                config: {
-                    handler: function (request, reply) {
-
-                        return reply(new Error('Ignore me'));
-                    }
-                }
-            }]);
-
-            server.inject( {
-                method: 'POST',
-                url: '/error'
-            }, function (response) {
-
-                // take log on index 1 because the first one will be the handler error log
-                var logMessage = response.request.getLog([ 'internal', 'implementation', 'error' ])[1].data.message;
-
-                expect(logMessage).to.equal('Ignore me');
-                done();
-            });
-
-        });
     });
 });

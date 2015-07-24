@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0
+* No more `throw: true`, Boombox wil now only throw if it couldn't convert
+* Converted errors now have the `isBoombox` property like the `isServer` one
+* Updated dependencies
+
 ## 2.2.0
 * Added `throw` option. When `true` it will alao throw the modified error. This can be usefull in some logging or debugging cases.
 
