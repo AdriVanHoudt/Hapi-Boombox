@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.1.0
+* Update dependencies
+* Log after reply instead of before
+* Added some extra info to the log
+* Now tested against hapi 10.x see https://github.com/hapijs/hapi/issues/2765
+
 ## 3.0.0
 * No more `throw: true`, Boombox wil now only throw if it couldn't convert
 * Converted errors now have the `isBoombox` property like the `isServer` one

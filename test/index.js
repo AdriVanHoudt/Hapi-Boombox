@@ -119,7 +119,7 @@ describe('Boombox basics', function () {
 
     it('Returns the right error for a custom error', function (done) {
 
-        var payload = { error: 'IGNORE ME' };
+        var payload = { error: '--> IGNORE ME <--' };
 
         server.inject({
             method: 'POST',
