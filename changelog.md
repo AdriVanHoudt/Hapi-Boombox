@@ -1,5 +1,8 @@
 # Changelog
 
+# 3.1.2
+* catch edge case
+
 # 3.1.1
 * only log when needed
 
