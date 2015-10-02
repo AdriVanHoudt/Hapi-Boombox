@@ -1,5 +1,8 @@
 # Changelog
 
+# 3.1.1
+* only log when needed
+
 # 3.1.0
 * Update dependencies
 * Log after reply instead of before
