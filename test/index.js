@@ -1,32 +1,34 @@
-var Lab = require('lab');
-var Code = require('code');
-var Hapi = require('hapi');
-var Basic = require('hapi-auth-basic');
+'use strict';
 
-var Errors = require('./config/errors.json');
+const Lab = require('lab');
+const Code = require('code');
+const Hapi = require('hapi');
+const Basic = require('hapi-auth-basic');
 
-
-var lab = exports.lab = Lab.script();
-var describe = lab.experiment;
-var it = lab.it;
-var expect = Code.expect;
+const Errors = require('./config/errors.json');
 
 
-describe('Startup', function () {
+const lab = exports.lab = Lab.script();
+const describe = lab.experiment;
+const it = lab.it;
+const expect = Code.expect;
 
-    it('Registers', function (done) {
 
-        var server = new Hapi.Server();
+describe('Startup', () => {
+
+    it('Registers', (done) => {
+
+        const server = new Hapi.Server();
         server.connection();
 
         server.register({
             register: require('../'),
             options: { errors: Errors }
-        }, function (err) {
+        }, (err) => {
 
             expect(err).to.not.exist();
 
-            server.start(function (err) {
+            server.start((err) => {
 
                 expect(err).to.not.exist();
 
@@ -37,18 +39,18 @@ describe('Startup', function () {
 });
 
 
-describe('Boombox basics', function () {
+describe('Boombox basics', () => {
 
-    var server = new Hapi.Server();
+    const server = new Hapi.Server();
 
-    lab.before(function (done) {
+    lab.before((done) => {
 
         server.connection();
 
         server.register([{
             register: require('../'),
             options: { errors: Errors }
-        }, Basic], function (err) {
+        }, Basic], (err) => {
 
             expect(err).to.not.exist();
 
@@ -97,15 +99,15 @@ describe('Boombox basics', function () {
         });
     });
 
-    it('Returns the right error for the provided key', function (done) {
+    it('Returns the right error for the provided key', (done) => {
 
-        var payload = { error: 'ERROR_KEY_1' };
+        const payload = { error: 'ERROR_KEY_1' };
 
         server.inject({
             method: 'POST',
             url: '/error',
             payload: payload
-        }, function (response) {
+        }, (response) => {
 
             expect(response.result).to.deep.equal({
                 statusCode: 405,
@@ -117,15 +119,15 @@ describe('Boombox basics', function () {
         });
     });
 
-    it('Returns the right error for a custom error', function (done) {
+    it('Returns the right error for a custom error', (done) => {
 
-        var payload = { error: '--> IGNORE ME <--' };
+        const payload = { error: '--> IGNORE ME <--' };
 
         server.inject({
             method: 'POST',
             url: '/error',
             payload: payload
-        }, function (response) {
+        }, (response) => {
 
             expect(response.request.getLog('implementation').length).to.equal(1);
             expect(response.result).to.deep.equal({
@@ -138,15 +140,15 @@ describe('Boombox basics', function () {
         });
     });
 
-    it('Replies normally when not providing an error', function (done) {
+    it('Replies normally when not providing an error', (done) => {
 
-        var payload = { normal: 'test' };
+        const payload = { normal: 'test' };
 
         server.inject({
             method: 'POST',
             url: '/normal',
             payload: payload
-        }, function (response) {
+        }, (response) => {
 
             expect(response.result).to.deep.equal(payload);
 
@@ -154,9 +156,9 @@ describe('Boombox basics', function () {
         });
     });
 
-    it('Only throws not converted errors', function (done) {
+    it('Only throws not converted errors', (done) => {
 
-        var payload = { error: 'ERROR_KEY_1' };
+        const payload = { error: 'ERROR_KEY_1' };
 
         server.inject({
             method: 'POST',
@@ -165,7 +167,7 @@ describe('Boombox basics', function () {
             headers: {
                 authorization: 'Basic dGVzdDp0ZXN0'
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.request.getLog('implementation').length).to.equal(0);
 
@@ -173,9 +175,9 @@ describe('Boombox basics', function () {
         });
     });
 
-    it('Has the credentials in the log', function (done) {
+    it('Has the credentials in the log', (done) => {
 
-        var payload = { error: 'ERROR_KEY_1' };
+        const payload = { error: 'ERROR_KEY_1' };
 
         server.inject({
             method: 'POST',
@@ -184,9 +186,9 @@ describe('Boombox basics', function () {
             headers: {
                 authorization: 'Basic dGVzdDp0ZXN0'
             }
-        }, function (response) {
+        }, (response) => {
 
-            var credentials = response.request.getLog(false)[0].data.request.credentials;
+            const credentials = response.request.getLog(false)[0].data.request.credentials;
             expect(credentials).to.deep.equal({ id: 1, name: 'John Doe' });
 
             expect(response.result).to.deep.equal({
@@ -200,16 +202,17 @@ describe('Boombox basics', function () {
     });
 });
 
-describe('Options', function () {
+describe('Options', () => {
 
-    it('Not providing custom errors does not throw', function (done) {
+    it('Not providing custom errors does not throw', (done) => {
 
-        var server = new Hapi.Server();
+        const server = new Hapi.Server();
         server.connection();
 
         try {
-            server.register({ register: require('../') }, function () {});
-        } catch (e) {
+            server.register({ register: require('../') }, () => {});
+        }
+        catch (e) {
             expect(e).to.not.exist();
         }
 
