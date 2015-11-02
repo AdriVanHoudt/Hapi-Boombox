@@ -21,12 +21,12 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "boom": "3.0.0"
+    "boom": "3.0.x"
   },
   "devDependencies": {
-    "code": "2.0.1",
-    "eslint-config-hapi": "4.0.x",
-    "eslint-plugin-hapi": "2.0.0",
+    "code": "2.x.x",
+    "eslint-config-hapi": "5.x.x",
+    "eslint-plugin-hapi": "2.x.x",
     "hapi": "11.0.x",
     "hapi-auth-basic": "3.0.x",
     "lab": "7.x.x"
