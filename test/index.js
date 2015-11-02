@@ -6,6 +6,7 @@ const Hapi = require('hapi');
 const Basic = require('hapi-auth-basic');
 
 const Errors = require('./config/errors.json');
+const Errors2 = require('./config/errors2.json');
 
 
 const lab = exports.lab = Lab.script();
@@ -35,6 +36,48 @@ describe('Startup', () => {
                 done();
             });
         });
+    });
+
+    it('Only registers once', (done) => {
+
+        const server = new Hapi.Server();
+        server.connection();
+
+        server.register([
+            {
+                register: require('../'),
+                options: { errors: Errors }
+            }, {
+                register: require('../'),
+                options: { errors: Errors2 }
+            }
+        ], (err) => {
+
+            expect(err).to.not.exist();
+
+            server.start((err) => {
+
+                expect(err).to.not.exist();
+                expect(server.registrations['hapi-boombox']).to.be.an.object();
+
+                done();
+            });
+        });
+    });
+
+    it('Not providing custom errors does not throw', (done) => {
+
+        const server = new Hapi.Server();
+        server.connection();
+
+        try {
+            server.register({ register: require('../') }, () => {});
+        }
+        catch (e) {
+            expect(e).to.not.exist();
+        }
+
+        done();
     });
 });
 
@@ -199,23 +242,5 @@ describe('Boombox basics', () => {
 
             done();
         });
-    });
-});
-
-describe('Options', () => {
-
-    it('Not providing custom errors does not throw', (done) => {
-
-        const server = new Hapi.Server();
-        server.connection();
-
-        try {
-            server.register({ register: require('../') }, () => {});
-        }
-        catch (e) {
-            expect(e).to.not.exist();
-        }
-
-        done();
     });
 });
