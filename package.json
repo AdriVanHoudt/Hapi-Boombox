@@ -28,7 +28,7 @@
     "eslint-config-hapi": "5.x.x",
     "eslint-plugin-hapi": "2.x.x",
     "hapi": "11.0.x",
-    "hapi-auth-basic": "3.0.x",
+    "hapi-auth-basic": "4.0.0",
     "lab": "7.x.x"
   },
   "directories": {
