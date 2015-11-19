@@ -25,10 +25,10 @@
   },
   "devDependencies": {
     "code": "2.x.x",
-    "eslint-config-hapi": "5.x.x",
-    "eslint-plugin-hapi": "2.x.x",
-    "hapi": "11.0.x",
-    "hapi-auth-basic": "4.0.0",
+    "eslint-config-hapi": "7.x.x",
+    "eslint-plugin-hapi": "4.x.x",
+    "hapi": "11.x.x",
+    "hapi-auth-basic": "4.x.x",
     "lab": "7.x.x"
   },
   "directories": {
