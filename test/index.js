@@ -19,7 +19,7 @@ describe('Startup', () => {
 
     it('Registers', (done) => {
 
-        const server = new Hapi.Server();
+        const server = new Hapi.Server({ debug: false });
         server.connection();
 
         server.register({
@@ -40,7 +40,7 @@ describe('Startup', () => {
 
     it('Only registers once', (done) => {
 
-        const server = new Hapi.Server();
+        const server = new Hapi.Server({ debug: false });
         server.connection();
 
         server.register([
@@ -67,7 +67,7 @@ describe('Startup', () => {
 
     it('Not providing custom errors does not throw', (done) => {
 
-        const server = new Hapi.Server();
+        const server = new Hapi.Server({ debug: false });
         server.connection();
 
         try {
@@ -84,7 +84,7 @@ describe('Startup', () => {
 
 describe('Boombox basics', () => {
 
-    const server = new Hapi.Server();
+    const server = new Hapi.Server({ debug: false });
 
     lab.before((done) => {
 
@@ -205,7 +205,7 @@ describe('Boombox basics', () => {
 
         server.inject({
             method: 'POST',
-            url: '/auth',
+            url: '/normal',
             payload: payload,
             headers: {
                 authorization: 'Basic dGVzdDp0ZXN0'
