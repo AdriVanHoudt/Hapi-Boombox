@@ -109,6 +109,17 @@ describe('Boombox basics', () => {
             }]);
 
             server.route([{
+                method: 'GET',
+                path: '/error',
+                config: {
+                    handler: function (request, reply) {
+
+                        return reply(new Error('ERROR_KEY_1'));
+                    }
+                }
+            }]);
+
+            server.route([{
                 method: 'POST',
                 path: '/normal',
                 config: {
@@ -263,6 +274,26 @@ describe('Boombox basics', () => {
 
             const logPayload = response.request.getLog(false)[0].data.request.payload;
             expect(logPayload).to.deep.equal({ error: 'ERROR_KEY_1' });
+
+            expect(response.result).to.deep.equal({
+                statusCode: 405,
+                error: 'Method Not Allowed',
+                message: 'Error one'
+            });
+
+            done();
+        });
+    });
+
+    it('Logs on GET error', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/error',
+            headers: {
+                authorization: 'Basic dGVzdDp0ZXN0'
+            }
+        }, (response) => {
 
             expect(response.result).to.deep.equal({
                 statusCode: 405,
