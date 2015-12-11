@@ -133,7 +133,11 @@ describe('Boombox basics', () => {
                     auth: 'simple',
                     handler: function (request, reply) {
 
-                        return reply(new Error(request.payload.error));
+                        if (request.payload) {
+                            return reply(new Error(request.payload.error));
+                        }
+
+                        return reply(new Error('Something went wrong'));
                     }
                 }
             }]);
@@ -238,6 +242,52 @@ describe('Boombox basics', () => {
                 statusCode: 405,
                 error: 'Method Not Allowed',
                 message: 'Error one'
+            });
+
+            done();
+        });
+    });
+
+    it('Deletes password from payload', (done) => {
+
+        const payload = { error: 'ERROR_KEY_1', password: 'pleasedonothackme' };
+
+        server.inject({
+            method: 'POST',
+            url: '/auth',
+            payload: payload,
+            headers: {
+                authorization: 'Basic dGVzdDp0ZXN0'
+            }
+        }, (response) => {
+
+            const logPayload = response.request.getLog(false)[0].data.request.payload;
+            expect(logPayload).to.deep.equal({ error: 'ERROR_KEY_1' });
+
+            expect(response.result).to.deep.equal({
+                statusCode: 405,
+                error: 'Method Not Allowed',
+                message: 'Error one'
+            });
+
+            done();
+        });
+    });
+
+    it('Does notthing on normal error', (done) => {
+
+        server.inject({
+            method: 'POST',
+            url: '/auth',
+            headers: {
+                authorization: 'Basic dGVzdDp0ZXN0'
+            }
+        }, (response) => {
+
+            expect(response.result).to.deep.equal({
+                statusCode: 500,
+                error: 'Internal Server Error',
+                message: 'An internal server error occurred'
             });
 
             done();
