@@ -1,6 +1,6 @@
 {
   "name": "hapi-boombox",
-  "version": "4.2.2",
+  "version": "5.0.0",
   "description": "Boom error wrapper",
   "main": "lib/index.js",
   "scripts": {
