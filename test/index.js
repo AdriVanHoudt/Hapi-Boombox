@@ -19,7 +19,7 @@ describe('Startup', () => {
 
     it('Registers', (done) => {
 
-        const server = new Hapi.Server({ debug: false });
+        const server = new Hapi.Server();
         server.connection();
 
         server.register({
@@ -40,7 +40,7 @@ describe('Startup', () => {
 
     it('Only registers once', (done) => {
 
-        const server = new Hapi.Server({ debug: false });
+        const server = new Hapi.Server();
         server.connection();
 
         server.register([
@@ -67,7 +67,7 @@ describe('Startup', () => {
 
     it('Not providing custom errors does not throw', (done) => {
 
-        const server = new Hapi.Server({ debug: false });
+        const server = new Hapi.Server();
         server.connection();
 
         try {
@@ -84,7 +84,7 @@ describe('Startup', () => {
 
 describe('Boombox basics', () => {
 
-    const server = new Hapi.Server({ debug: false });
+    const server = new Hapi.Server();
 
     lab.before((done) => {
 
@@ -179,7 +179,7 @@ describe('Boombox basics', () => {
 
     it('Returns the right error for a custom error', (done) => {
 
-        const payload = { error: '--> IGNORE ME <--' };
+        const payload = { error: 'Error' };
 
         server.inject({
             method: 'POST',
@@ -187,7 +187,7 @@ describe('Boombox basics', () => {
             payload: payload
         }, (response) => {
 
-            expect(response.request.getLog('implementation').length).to.equal(1);
+            expect(response.request.getLog('internal').length).to.equal(1);
             expect(response.result).to.deep.equal({
                 statusCode: 500,
                 error: 'Internal Server Error',
@@ -209,25 +209,6 @@ describe('Boombox basics', () => {
         }, (response) => {
 
             expect(response.result).to.deep.equal(payload);
-
-            done();
-        });
-    });
-
-    it('Only throws not converted errors', (done) => {
-
-        const payload = { error: 'ERROR_KEY_1' };
-
-        server.inject({
-            method: 'POST',
-            url: '/normal',
-            payload: payload,
-            headers: {
-                authorization: 'Basic dGVzdDp0ZXN0'
-            }
-        }, (response) => {
-
-            expect(response.request.getLog('implementation').length).to.equal(0);
 
             done();
         });
