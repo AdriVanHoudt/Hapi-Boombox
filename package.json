@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "code": "2.x.x",
-    "eslint-config-hapi": "8.x.x",
+    "eslint-config-hapi": "9.1.0",
     "eslint-plugin-hapi": "4.x.x",
     "hapi": "11.x.x",
     "hapi-auth-basic": "4.x.x",
