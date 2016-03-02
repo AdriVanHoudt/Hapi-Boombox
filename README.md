@@ -25,7 +25,7 @@ Bommbox will do a `request.log` with `hapi-boombox` as tag and the result as dat
 * `request` additional info about the request
     * `path`, `query`, `method`, `payload`, `headers`, `request.info`, `credentials`
         * `credentials`: if present this will be an object that includes 2 properties from `request.auth.credentials`. 
-            * `id` and `name`. 
+            * `id`. 
             * These are properties required by the author for his project. If you want more or something custumizable make an issue or PR.
  
 ## Test

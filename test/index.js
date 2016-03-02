@@ -228,7 +228,7 @@ describe('Boombox basics', () => {
         }, (response) => {
 
             const credentials = response.request.getLog(false)[0].data.request.credentials;
-            expect(credentials).to.deep.equal({ id: 1, name: 'John Doe' });
+            expect(credentials).to.deep.equal({ id: 1 });
 
             expect(response.result).to.deep.equal({
                 statusCode: 405,
