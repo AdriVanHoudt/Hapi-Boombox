@@ -24,7 +24,7 @@
     "boom": "3.1.x"
   },
   "devDependencies": {
-    "code": "2.x.x",
+    "code": "3.0.0",
     "eslint-config-hapi": "9.x.x",
     "eslint-plugin-hapi": "4.x.x",
     "hapi": "13.x.x",
