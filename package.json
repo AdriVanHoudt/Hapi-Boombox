@@ -27,7 +27,7 @@
     "code": "2.x.x",
     "eslint-config-hapi": "9.x.x",
     "eslint-plugin-hapi": "4.x.x",
-    "hapi": "13.x.x",
+    "hapi": "13.5.0",
     "hapi-auth-basic": "4.x.x",
     "lab": "10.x.x"
   },
