@@ -167,7 +167,7 @@ describe('Boombox basics', () => {
             payload: payload
         }, (response) => {
 
-            expect(response.result).to.deep.equal({
+            expect(response.result).to.equal({
                 statusCode: 405,
                 error: 'Method Not Allowed',
                 message: 'Error one'
@@ -188,7 +188,7 @@ describe('Boombox basics', () => {
         }, (response) => {
 
             expect(response.request.getLog('internal').length).to.equal(1);
-            expect(response.result).to.deep.equal({
+            expect(response.result).to.equal({
                 statusCode: 500,
                 error: 'Internal Server Error',
                 message: 'An internal server error occurred'
@@ -208,7 +208,7 @@ describe('Boombox basics', () => {
             payload: payload
         }, (response) => {
 
-            expect(response.result).to.deep.equal(payload);
+            expect(response.result).to.equal(payload);
 
             done();
         });
@@ -228,9 +228,9 @@ describe('Boombox basics', () => {
         }, (response) => {
 
             const credentials = response.request.getLog(false)[0].data.request.credentials;
-            expect(credentials).to.deep.equal({ id: 1 });
+            expect(credentials).to.equal({ id: 1 });
 
-            expect(response.result).to.deep.equal({
+            expect(response.result).to.equal({
                 statusCode: 405,
                 error: 'Method Not Allowed',
                 message: 'Error one'
@@ -254,9 +254,9 @@ describe('Boombox basics', () => {
         }, (response) => {
 
             const logPayload = response.request.getLog(false)[0].data.request.payload;
-            expect(logPayload).to.deep.equal({ error: 'ERROR_KEY_1' });
+            expect(logPayload).to.equal({ error: 'ERROR_KEY_1' });
 
-            expect(response.result).to.deep.equal({
+            expect(response.result).to.equal({
                 statusCode: 405,
                 error: 'Method Not Allowed',
                 message: 'Error one'
@@ -276,7 +276,7 @@ describe('Boombox basics', () => {
             }
         }, (response) => {
 
-            expect(response.result).to.deep.equal({
+            expect(response.result).to.equal({
                 statusCode: 405,
                 error: 'Method Not Allowed',
                 message: 'Error one'
@@ -296,7 +296,7 @@ describe('Boombox basics', () => {
             }
         }, (response) => {
 
-            expect(response.result).to.deep.equal({
+            expect(response.result).to.equal({
                 statusCode: 500,
                 error: 'Internal Server Error',
                 message: 'An internal server error occurred'
