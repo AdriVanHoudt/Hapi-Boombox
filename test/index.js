@@ -164,7 +164,7 @@ describe('Boombox basics', () => {
         server.inject({
             method: 'POST',
             url: '/error',
-            payload: payload
+            payload
         }, (response) => {
 
             expect(response.result).to.equal({
@@ -184,7 +184,7 @@ describe('Boombox basics', () => {
         server.inject({
             method: 'POST',
             url: '/error',
-            payload: payload
+            payload
         }, (response) => {
 
             expect(response.request.getLog('internal').length).to.equal(1);
@@ -205,7 +205,7 @@ describe('Boombox basics', () => {
         server.inject({
             method: 'POST',
             url: '/normal',
-            payload: payload
+            payload
         }, (response) => {
 
             expect(response.result).to.equal(payload);
@@ -221,7 +221,7 @@ describe('Boombox basics', () => {
         server.inject({
             method: 'POST',
             url: '/auth',
-            payload: payload,
+            payload,
             headers: {
                 authorization: 'Basic dGVzdDp0ZXN0'
             }
@@ -247,7 +247,7 @@ describe('Boombox basics', () => {
         server.inject({
             method: 'POST',
             url: '/auth',
-            payload: payload,
+            payload,
             headers: {
                 authorization: 'Basic dGVzdDp0ZXN0'
             }
