@@ -17,6 +17,19 @@ Provide Boombox with custom errors (see [here](https://github.com/AdriVanHoudt/H
 E.g. you return `new Error('RESOURCE_NOT_FOUND')` and the config states that this should return a `Boom.notFound` (404). Boombox will do that for you instead of returning an internal server error.
 Look at [the test example](https://github.com/AdriVanHoudt/Hapi-Boombox/blob/master/test/config/errors.json) to see what the config night look like.
 
+Boombox also provides a server method so you can transform your errors on the go.
+Returns `undefined` when matching fails.
+```js
+const matched = server.boombox(new Error('RESOURCE_NOT_FOUND'));
+/*
+ * matched
+ *{
+ *    message: 'Custom error message for RESOURCE_NOT_FOUND',
+ *    type: 'notFound'
+ *}
+ */
+```
+
 ### Loging
 Bommbox will do a `request.log` with `hapi-boombox` as tag and the result as data.
 
@@ -24,10 +37,10 @@ Bommbox will do a `request.log` with `hapi-boombox` as tag and the result as dat
 * `stack` the stacktrace
 * `request` additional info about the request
     * `path`, `query`, `method`, `payload`, `headers`, `request.info`, `credentials`
-        * `credentials`: if present this will be an object that includes 2 properties from `request.auth.credentials`. 
-            * `id`. 
+        * `credentials`: if present this will be an object that includes 2 properties from `request.auth.credentials`.
+            * `id`.
             * These are properties required by the author for his project. If you want more or something custumizable make an issue or PR.
- 
+
 ## Test
 100% test coverage!
 Also look in the tests for more examples.

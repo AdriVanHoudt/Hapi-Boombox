@@ -305,4 +305,20 @@ describe('Boombox basics', () => {
             done();
         });
     });
+
+    it('Registers custom server function', (done) => {
+
+        const matched = server.boombox(new Error('ERROR_KEY_1'));
+
+        expect(matched).to.equal({
+            message: 'Error one',
+            type: 'methodNotAllowed'
+        });
+
+        const unmatched = server.boombox(new Error('ERROR_KEY_2'));
+
+        expect(unmatched).to.not.exist();
+
+        done();
+    });
 });
