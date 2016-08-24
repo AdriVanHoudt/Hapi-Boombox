@@ -322,6 +322,16 @@ describe('Boombox basics', () => {
         done();
     });
 
+    it('Custom server function works when passing nothing', (done) => {
+
+        expect(() => {
+
+            server.boombox(null);
+        }).to.not.throw();
+
+        done();
+    });
+
     it('Registers custom request function', (done) => {
 
         const server2 = new Hapi.Server();
