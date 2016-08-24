@@ -17,7 +17,7 @@ Provide Boombox with custom errors (see [here](https://github.com/AdriVanHoudt/H
 E.g. you return `new Error('RESOURCE_NOT_FOUND')` and the config states that this should return a `Boom.notFound` (404). Boombox will do that for you instead of returning an internal server error.
 Look at [the test example](https://github.com/AdriVanHoudt/Hapi-Boombox/blob/master/test/config/errors.json) to see what the config night look like.
 
-Boombox also provides a server method so you can transform your errors on the go.
+Boombox also provides a server and request method (`server.boombox()`, `request.boombox()`) so you can transform your errors on the go.
 Returns `undefined` when matching fails.
 ```js
 const matched = server.boombox(new Error('RESOURCE_NOT_FOUND'));
@@ -39,12 +39,12 @@ Bommbox will do a `request.log` with `hapi-boombox` as tag and the result as dat
     * `path`, `query`, `method`, `payload`, `headers`, `request.info`, `credentials`
         * `credentials`: if present this will be an object that includes 2 properties from `request.auth.credentials`.
             * `id`.
-            * These are properties required by the author for his project. If you want more or something custumizable make an issue or PR.
+            * These are properties required by the author for his project. If you want more or something customizable make an issue or PR.
 
 ## Test
 100% test coverage!
 Also look in the tests for more examples.
 
 ## Notes
-Personally I use this in a Hapi server to use generic keys as errors in my code but to give the end user a decent error message and to easily match errors with the right error code.
+Personally I use this in a hapi server to use generic keys as errors in my code but to give the end user a decent error message and to easily match errors with the right error code.
 Maybe in the future this can also return localized errors.

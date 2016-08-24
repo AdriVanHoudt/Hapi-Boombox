@@ -321,4 +321,47 @@ describe('Boombox basics', () => {
 
         done();
     });
+
+    it('Registers custom request function', (done) => {
+
+        const server2 = new Hapi.Server();
+
+        server2.connection();
+
+        server2.register([{
+            register: require('../'),
+            options: { errors: Errors }
+        }], (err) => {
+
+            expect(err).to.not.exist();
+
+            server2.route([{
+                method: 'POST',
+                path: '/error',
+                config: {
+                    handler: function (request, reply) {
+
+                        const matched = request.boombox(new Error(request.payload.error));
+                        expect(matched).to.equal({
+                            message: 'Error one',
+                            type: 'methodNotAllowed'
+                        });
+
+                        return reply(matched);
+                    }
+                }
+            }]);
+
+            server2.inject({
+                method: 'POST',
+                url: '/error',
+                payload: {
+                    error: 'ERROR_KEY_1'
+                }
+            }, () => {
+
+                done();
+            });
+        });
+    });
 });
