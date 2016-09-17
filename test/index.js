@@ -104,7 +104,8 @@ describe('Boombox basics', () => {
                     handler: function (request, reply) {
 
                         return reply(new Error(request.payload.error));
-                    }
+                    },
+                    log: true
                 }
             }]);
 
@@ -131,7 +132,7 @@ describe('Boombox basics', () => {
             }]);
 
             server.auth.strategy('simple', 'basic', {
-                validateFunc: function (req, a, v, callback) {
+                validateFunc: (req, a, v, callback) => {
 
                     return callback(null, true, { id: 1, name: 'John Doe' });
                 }
@@ -149,7 +150,8 @@ describe('Boombox basics', () => {
                         }
 
                         return reply(new Error('Something went wrong'));
-                    }
+                    },
+                    log: true
                 }
             }]);
 
