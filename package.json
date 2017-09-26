@@ -21,7 +21,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "boom": "~5.2.0"
+    "boom": "~6.0.0"
   },
   "devDependencies": {
     "code": "4.x.x",
