@@ -406,3 +406,57 @@ describe('Boombox basics', () => {
         });
     });
 });
+
+describe('Options', () => {
+
+    it('doesn\'t log with `disableLog`', () => {
+
+        const server = new Hapi.Server();
+        server.connection();
+
+        return new Promise((resolve) => {
+
+            return server.register({
+                register: require('../'),
+                options: { errors: Errors, disableLog: true }
+            }, (err) => {
+
+                expect(err).to.not.exist();
+
+                server.route([{
+                    method: 'POST',
+                    path: '/error',
+                    config: {
+                        handler: function (request, reply) {
+
+                            return reply(new Error(request.payload.error));
+                        },
+                        log: true
+                    }
+                }]);
+
+                return server.start((err) => {
+
+                    expect(err).to.not.exist();
+
+                    return server.inject({
+                        method: 'POST',
+                        url: '/error',
+                        payload: {
+                            error: 'ERROR_KEY_400'
+                        }
+                    }, (res) => {
+
+                        expect(res.statusCode).to.equal(418);
+
+
+                        const hasBoomBoxLog = !!res.request.getLog().find((log) => log.tags.includes('hapi-boombox'));
+                        expect(hasBoomBoxLog).to.be.false();
+
+                        return resolve();
+                    });
+                });
+            });
+        });
+    });
+});

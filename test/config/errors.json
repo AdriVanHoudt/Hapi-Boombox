@@ -2,5 +2,13 @@
 	"ERROR_KEY_1": {
 		"message": "Error one",
 		"type": "methodNotAllowed"
+	},
+	"ERROR_KEY_500": {
+		"message": "Error 500",
+		"type": "badImplementation"
+	},
+	"ERROR_KEY_400": {
+		"message": "Error 400",
+		"type": "teapot"
 	}
 }
