@@ -17,55 +17,61 @@ const expect = Code.expect;
 
 describe('Startup', () => {
 
-    it('Registers', (done) => {
+    it('Registers', () => {
 
         const server = new Hapi.Server();
         server.connection();
 
-        server.register({
-            register: require('../'),
-            options: { errors: Errors }
-        }, (err) => {
+        return new Promise((resolve) => {
 
-            expect(err).to.not.exist();
-
-            server.start((err) => {
-
-                expect(err).to.not.exist();
-
-                done();
-            });
-        });
-    });
-
-    it('Only registers once', (done) => {
-
-        const server = new Hapi.Server();
-        server.connection();
-
-        server.register([
-            {
+            return server.register({
                 register: require('../'),
                 options: { errors: Errors }
-            }, {
-                register: require('../'),
-                options: { errors: Errors2 }
-            }
-        ], (err) => {
-
-            expect(err).to.not.exist();
-
-            server.start((err) => {
+            }, (err) => {
 
                 expect(err).to.not.exist();
-                expect(server.registrations['hapi-boombox']).to.be.an.object();
 
-                done();
+                server.start((err) => {
+
+                    expect(err).to.not.exist();
+
+                    return resolve();
+                });
             });
         });
     });
 
-    it('Not providing custom errors does not throw', (done) => {
+    it('Only registers once', () => {
+
+        const server = new Hapi.Server();
+        server.connection();
+
+        return new Promise((resolve) => {
+
+            return server.register([
+                {
+                    register: require('../'),
+                    options: { errors: Errors }
+                }, {
+                    register: require('../'),
+                    options: { errors: Errors2 }
+                }
+            ], (err) => {
+
+                expect(err).to.not.exist();
+
+                server.start((err) => {
+
+                    expect(err).to.not.exist();
+                    expect(server.registrations['hapi-boombox']).to.be.an.object();
+
+                    return resolve();
+                });
+            });
+        });
+    });
+
+    it('Not providing custom errors does not throw', () => {
 
         const server = new Hapi.Server();
         server.connection();
@@ -76,8 +82,6 @@ describe('Startup', () => {
         catch (e) {
             expect(e).to.not.exist();
         }
-
-        done();
     });
 });
 
@@ -86,229 +90,253 @@ describe('Boombox basics', () => {
 
     const server = new Hapi.Server();
 
-    lab.before((done) => {
+    lab.before(() => {
 
         server.connection();
 
-        server.register([{
-            register: require('../'),
-            options: { errors: Errors }
-        }, Basic], (err) => {
+        return new Promise((resolve) => {
 
-            expect(err).to.not.exist();
+            return server.register([{
+                register: require('../'),
+                options: { errors: Errors }
+            }, Basic], (err) => {
 
-            server.route([{
-                method: 'POST',
-                path: '/error',
-                config: {
-                    handler: function (request, reply) {
+                expect(err).to.not.exist();
 
-                        return reply(new Error(request.payload.error));
-                    },
-                    log: true
-                }
-            }]);
+                server.route([{
+                    method: 'POST',
+                    path: '/error',
+                    config: {
+                        handler: function (request, reply) {
 
-            server.route([{
-                method: 'GET',
-                path: '/error',
-                config: {
-                    handler: function (request, reply) {
-
-                        return reply(new Error('ERROR_KEY_1'));
-                    }
-                }
-            }]);
-
-            server.route([{
-                method: 'POST',
-                path: '/normal',
-                config: {
-                    handler: function (request, reply) {
-
-                        return reply(request.payload);
-                    }
-                }
-            }]);
-
-            server.auth.strategy('simple', 'basic', {
-                validateFunc: (req, a, v, callback) => {
-
-                    return callback(null, true, { id: 1, name: 'John Doe' });
-                }
-            });
-
-            server.route([{
-                method: 'POST',
-                path: '/auth',
-                config: {
-                    auth: 'simple',
-                    handler: function (request, reply) {
-
-                        if (request.payload) {
                             return reply(new Error(request.payload.error));
+                        },
+                        log: true
+                    }
+                }]);
+
+                server.route([{
+                    method: 'GET',
+                    path: '/error',
+                    config: {
+                        handler: function (request, reply) {
+
+                            return reply(new Error('ERROR_KEY_1'));
                         }
+                    }
+                }]);
 
-                        return reply(new Error('Something went wrong'));
-                    },
-                    log: true
-                }
-            }]);
+                server.route([{
+                    method: 'POST',
+                    path: '/normal',
+                    config: {
+                        handler: function (request, reply) {
 
-            return done();
+                            return reply(request.payload);
+                        }
+                    }
+                }]);
+
+                server.auth.strategy('simple', 'basic', {
+                    validateFunc: (req, a, v, callback) => {
+
+                        return callback(null, true, { id: 1, name: 'John Doe' });
+                    }
+                });
+
+                server.route([{
+                    method: 'POST',
+                    path: '/auth',
+                    config: {
+                        auth: 'simple',
+                        handler: function (request, reply) {
+
+                            if (request.payload) {
+                                return reply(new Error(request.payload.error));
+                            }
+
+                            return reply(new Error('Something went wrong'));
+                        },
+                        log: true
+                    }
+                }]);
+
+                return resolve();
+            });
         });
     });
 
-    it('Returns the right error for the provided key', (done) => {
+    it('Returns the right error for the provided key', () => {
 
         const payload = { error: 'ERROR_KEY_1' };
 
-        server.inject({
-            method: 'POST',
-            url: '/error',
-            payload
-        }, (response) => {
+        return new Promise((resolve) => {
 
-            expect(response.result).to.equal({
-                statusCode: 405,
-                error: 'Method Not Allowed',
-                message: 'Error one'
+            return server.inject({
+                method: 'POST',
+                url: '/error',
+                payload
+            }, (response) => {
+
+                expect(response.result).to.equal({
+                    statusCode: 405,
+                    error: 'Method Not Allowed',
+                    message: 'Error one'
+                });
+
+                return resolve();
             });
-
-            done();
         });
     });
 
-    it('Returns the right error for a custom error', (done) => {
+    it('Returns the right error for a custom error', () => {
 
         const payload = { error: 'Error' };
 
-        server.inject({
-            method: 'POST',
-            url: '/error',
-            payload
-        }, (response) => {
+        return new Promise((resolve) => {
 
-            expect(response.request.getLog('internal').length).to.equal(1);
-            expect(response.result).to.equal({
-                statusCode: 500,
-                error: 'Internal Server Error',
-                message: 'An internal server error occurred'
+            return server.inject({
+                method: 'POST',
+                url: '/error',
+                payload
+            }, (response) => {
+
+                expect(response.request.getLog('internal').length).to.equal(1);
+                expect(response.result).to.equal({
+                    statusCode: 500,
+                    error: 'Internal Server Error',
+                    message: 'An internal server error occurred'
+                });
+
+                return resolve();
             });
-
-            done();
         });
     });
 
-    it('Replies normally when not providing an error', (done) => {
+    it('Replies normally when not providing an error', () => {
 
         const payload = { normal: 'test' };
 
-        server.inject({
-            method: 'POST',
-            url: '/normal',
-            payload
-        }, (response) => {
+        return new Promise((resolve) => {
 
-            expect(response.result).to.equal(payload);
+            return server.inject({
+                method: 'POST',
+                url: '/normal',
+                payload
+            }, (response) => {
 
-            done();
+                expect(response.result).to.equal(payload);
+
+                return resolve();
+            });
         });
     });
 
-    it('Has the credentials in the log', (done) => {
+    it('Has the credentials in the log', () => {
 
         const payload = { error: 'ERROR_KEY_1' };
 
-        server.inject({
-            method: 'POST',
-            url: '/auth',
-            payload,
-            headers: {
-                authorization: 'Basic dGVzdDp0ZXN0'
-            }
-        }, (response) => {
+        return new Promise((resolve) => {
 
-            const credentials = response.request.getLog(false)[0].data.request.credentials;
-            expect(credentials).to.equal({ id: 1 });
+            return server.inject({
+                method: 'POST',
+                url: '/auth',
+                payload,
+                headers: {
+                    authorization: 'Basic dGVzdDp0ZXN0'
+                }
+            }, (response) => {
 
-            expect(response.result).to.equal({
-                statusCode: 405,
-                error: 'Method Not Allowed',
-                message: 'Error one'
+                const credentials = response.request.getLog(false)[0].data.request.credentials;
+                expect(credentials).to.equal({ id: 1 });
+
+                expect(response.result).to.equal({
+                    statusCode: 405,
+                    error: 'Method Not Allowed',
+                    message: 'Error one'
+                });
+
+                return resolve();
             });
-
-            done();
         });
     });
 
-    it('Deletes password from payload', (done) => {
+    it('Deletes password from payload', () => {
 
         const payload = { error: 'ERROR_KEY_1', password: 'pleasedonothackme' };
 
-        server.inject({
-            method: 'POST',
-            url: '/auth',
-            payload,
-            headers: {
-                authorization: 'Basic dGVzdDp0ZXN0'
-            }
-        }, (response) => {
+        return new Promise((resolve) => {
 
-            const logPayload = response.request.getLog(false)[0].data.request.payload;
-            expect(logPayload).to.equal({ error: 'ERROR_KEY_1' });
+            return server.inject({
+                method: 'POST',
+                url: '/auth',
+                payload,
+                headers: {
+                    authorization: 'Basic dGVzdDp0ZXN0'
+                }
+            }, (response) => {
 
-            expect(response.result).to.equal({
-                statusCode: 405,
-                error: 'Method Not Allowed',
-                message: 'Error one'
+                const logPayload = response.request.getLog(false)[0].data.request.payload;
+                expect(logPayload).to.equal({ error: 'ERROR_KEY_1' });
+
+                expect(response.result).to.equal({
+                    statusCode: 405,
+                    error: 'Method Not Allowed',
+                    message: 'Error one'
+                });
+
+                return resolve();
             });
-
-            done();
         });
     });
 
-    it('Logs on GET error', (done) => {
+    it('Logs on GET error', () => {
 
-        server.inject({
-            method: 'GET',
-            url: '/error',
-            headers: {
-                authorization: 'Basic dGVzdDp0ZXN0'
-            }
-        }, (response) => {
+        return new Promise((resolve) => {
 
-            expect(response.result).to.equal({
-                statusCode: 405,
-                error: 'Method Not Allowed',
-                message: 'Error one'
+            return server.inject({
+                method: 'GET',
+                url: '/error',
+                headers: {
+                    authorization: 'Basic dGVzdDp0ZXN0'
+                }
+            }, (response) => {
+
+                expect(response.result).to.equal({
+                    statusCode: 405,
+                    error: 'Method Not Allowed',
+                    message: 'Error one'
+                });
+
+                return resolve();
             });
-
-            done();
         });
     });
 
-    it('Does notthing on normal error', (done) => {
+    it('Does notthing on normal error', () => {
 
-        server.inject({
-            method: 'POST',
-            url: '/auth',
-            headers: {
-                authorization: 'Basic dGVzdDp0ZXN0'
-            }
-        }, (response) => {
+        return new Promise((resolve) => {
 
-            expect(response.result).to.equal({
-                statusCode: 500,
-                error: 'Internal Server Error',
-                message: 'An internal server error occurred'
+            return server.inject({
+                method: 'POST',
+                url: '/auth',
+                headers: {
+                    authorization: 'Basic dGVzdDp0ZXN0'
+                }
+            }, (response) => {
+
+                expect(response.result).to.equal({
+                    statusCode: 500,
+                    error: 'Internal Server Error',
+                    message: 'An internal server error occurred'
+                });
+
+                return resolve();
             });
-
-            done();
         });
     });
 
-    it('Registers custom server function', (done) => {
+    it('Registers custom server function', () => {
 
         const matched = server.boombox(new Error('ERROR_KEY_1'));
 
@@ -320,59 +348,60 @@ describe('Boombox basics', () => {
         const unmatched = server.boombox(new Error('ERROR_KEY_2'));
 
         expect(unmatched).to.not.exist();
-
-        done();
     });
 
-    it('Custom server function works when passing nothing', (done) => {
+    it('Custom server function works when passing nothing', () => {
 
         expect(() => {
 
             server.boombox(null);
         }).to.not.throw();
-
-        done();
     });
 
-    it('Registers custom request function', (done) => {
+    it('Registers custom request function', () => {
 
         const server2 = new Hapi.Server();
 
         server2.connection();
 
-        server2.register([{
-            register: require('../'),
-            options: { errors: Errors }
-        }], (err) => {
+        return new Promise((resolve) => {
 
-            expect(err).to.not.exist();
+            return server2.register([{
+                register: require('../'),
+                options: { errors: Errors }
+            }], (err) => {
 
-            server2.route([{
-                method: 'POST',
-                path: '/error',
-                config: {
-                    handler: function (request, reply) {
+                expect(err).to.not.exist();
 
-                        const matched = request.boombox(new Error(request.payload.error));
-                        expect(matched).to.equal({
-                            message: 'Error one',
-                            type: 'methodNotAllowed'
-                        });
+                server2.route([{
+                    method: 'POST',
+                    path: '/error',
+                    config: {
+                        handler: function (request, reply) {
 
-                        return reply(matched);
+                            const matched = request.boombox(new Error(request.payload.error));
+                            expect(matched).to.equal({
+                                message: 'Error one',
+                                type: 'methodNotAllowed'
+                            });
+
+                            return reply(matched);
+                        }
                     }
-                }
-            }]);
+                }]);
 
-            server2.inject({
-                method: 'POST',
-                url: '/error',
-                payload: {
-                    error: 'ERROR_KEY_1'
-                }
-            }, () => {
+                server2.inject({
+                    method: 'POST',
+                    url: '/error',
+                    payload: {
+                        error: 'ERROR_KEY_1'
+                    }
+                }, (res) => {
 
-                done();
+                    expect(res.statusCode).to.equal(200);
+
+                    return resolve();
+                });
             });
         });
     });
