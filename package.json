@@ -4,8 +4,8 @@
   "description": "Boom error wrapper",
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab -e test -t 100 -vL -a code",
-    "test-html": "lab -e test -r html -o coverage.html -vL -a code"
+    "test": "lab -e test -t 100 -vL -a @hapi/code",
+    "test-html": "lab -e test -r html -o coverage.html -vL -a @hapi/code"
   },
   "repository": {
     "type": "git",
@@ -18,18 +18,18 @@
   },
   "homepage": "https://github.com/AdriVanHoudt/Hapi-Boombox",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=12.14.0"
   },
   "dependencies": {
-    "boom": "~7.3.0"
+    "@hapi/boom": "~9.0.0"
   },
   "devDependencies": {
-    "code": "5.2.4",
-    "eslint-config-hapi": "^12.0.0",
-    "eslint-plugin-hapi": "^4.1.0",
-    "hapi": "^16.7.0",
-    "hapi-auth-basic": "4.x.x",
-    "lab": "18.0.0"
+    "@hapi/code": "8.0.1",
+    "@hapi/eslint-config-hapi": "^13.0.2",
+    "@hapi/eslint-plugin-hapi": "^4.3.5",
+    "@hapi/hapi": "^18.4.0",
+    "@hapi/basic": "5.1.1",
+    "@hapi/lab": "22.0.3"
   },
   "directories": {
     "test": "test"

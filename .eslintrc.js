@@ -8,7 +8,7 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 2018
     },
-    extends: 'eslint-config-hapi',
+    extends: '@hapi/eslint-config-hapi',
     rules: {
         'no-undef': 2,
         'no-unused-expressions': 2,
