@@ -1,4 +1,5 @@
 # Hapi-Boombox [![Build Status](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox.svg)](https://travis-ci.org/AdriVanHoudt/Hapi-Boombox)
+
 >Hapi error conversion and logging
 
 ## What
@@ -12,8 +13,8 @@ Provide Boombox with custom errors (see [here](https://github.com/AdriVanHoudt/H
 
 ```js
     const Errors = require('./test/config/errors.json'); //Look here for an example!
-    server.register({
-        register: require('hapi-boombox'),
+    await server.register({
+        plugin: require('hapi-boombox'),
         options: { errors: Errors }
     }, callback);
 ```
@@ -39,13 +40,13 @@ You can disable the logging part by setting `disableLog` to `true`.
 
 ```js
     const Errors = require('./test/config/errors.json'); //Look here for an example!
-    server.register({
-        register: require('hapi-boombox'),
+    await server.register({
+        plugin: require('hapi-boombox'),
         options: { errors: Errors, disableLog: true }
     }, callback);
 ```
 
-### Loging
+### Logging
 
 Boombox will do a `request.log` with `hapi-boombox` and `error` as tags and the result as data.
 
