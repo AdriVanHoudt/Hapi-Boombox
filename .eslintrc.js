@@ -3,12 +3,13 @@
 module.exports = {
     env: {
         node: true,
-        es6: true
+        es6: true,
+        es2020: true
     },
     parserOptions: {
-        ecmaVersion: 2018
+        ecmaVersion: 2020
     },
-    extends: '@hapi/eslint-config-hapi',
+    extends: 'plugin:@hapi/recommended',
     rules: {
         'no-undef': 2,
         'no-unused-expressions': 2,
