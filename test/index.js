@@ -305,6 +305,44 @@ describe('Boombox basics', () => {
 
         expect(response.statusCode).to.equal(200);
     });
+
+    it('Allows chaining onPreResponse when not modifying the error response', async () => {
+
+        const server2 = Hapi.Server();
+
+        await server2.register([{
+            plugin: require('../'),
+            options: { errors: Errors }
+        }]);
+
+        // BoomBox does it's thing in an onPreResponse extension
+        // But we still want to allow other pre responses to run when BoomBox doesn't do anything
+        server2.ext('onPreResponse', (request, h) => {
+
+            request.response.output.payload.thisMustThere = true;
+
+            return h.continue;
+        });
+
+        server2.route([{
+            method: 'POST',
+            path: '/error',
+            config: {
+                handler: () => {
+
+                    throw new Error('500');
+                }
+            }
+        }]);
+
+        const response = await server2.inject({
+            method: 'POST',
+            url: '/error'
+        });
+
+        expect(response.statusCode).to.equal(500);
+        expect(response.result.thisMustThere).to.be.true();
+    });
 });
 
 describe('Options', () => {
