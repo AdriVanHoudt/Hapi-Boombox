@@ -347,7 +347,7 @@ describe('Boombox basics', () => {
 
 describe('Options', () => {
 
-    it('doesn\'t log with `disableLog`', async () => {
+    it('does not log with `disableLog`', async () => {
 
         const server = Hapi.Server();
 
@@ -380,8 +380,87 @@ describe('Options', () => {
 
         expect(response.statusCode).to.equal(418);
 
-
         const hasBoomBoxLog = !!response.request.logs.find((log) => log.tags.includes('hapi-boombox'));
         expect(hasBoomBoxLog).to.be.false();
+    });
+
+    it('does not transform when disabled through route plugin option', async () => {
+
+        const server = Hapi.Server();
+
+        await server.register({
+            plugin: require('../'),
+            options: { errors: Errors }
+        });
+
+        server.route([{
+            method: 'POST',
+            path: '/error',
+            config: {
+                handler: (request) => {
+
+                    return new Error(request.payload.error);
+                },
+                plugins: {
+                    'hapi-boombox': {
+                        disable: true
+                    }
+                }
+            }
+        }]);
+
+        await server.start();
+
+        const response = await server.inject({
+            method: 'POST',
+            url: '/error',
+            payload: {
+                error: 'ERROR_KEY_400'
+            }
+        });
+
+        expect(response.result).to.equal({
+            statusCode: 500,
+            error: 'Internal Server Error',
+            message: 'An internal server error occurred'
+        });
+    });
+
+    it('does transform when disabled is falsy', async () => {
+
+        const server = Hapi.Server();
+
+        await server.register({
+            plugin: require('../'),
+            options: { errors: Errors }
+        });
+
+        server.route([{
+            method: 'POST',
+            path: '/error',
+            config: {
+                handler: (request) => {
+
+                    return new Error(request.payload.error);
+                },
+                plugins: {
+                    'hapi-boombox': {
+                        disable: false
+                    }
+                }
+            }
+        }]);
+
+        await server.start();
+
+        const response = await server.inject({
+            method: 'POST',
+            url: '/error',
+            payload: {
+                error: 'ERROR_KEY_400'
+            }
+        });
+
+        expect(response.statusCode).to.equal(418);
     });
 });
